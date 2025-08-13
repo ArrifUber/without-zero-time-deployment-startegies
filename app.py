@@ -9,7 +9,7 @@ def ping():
 
 @app.route("/")
 def index():
-    return "no zero time deployment", 200
+    return "no zero time deployment (update)", 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
