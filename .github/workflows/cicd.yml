@@ -1,0 +1,44 @@
+name: Staging Phase
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Create Private Key File
+        run: echo "${{ secrets.GENERAL_PRIVATE_KEY }}" > conf/privKey.key
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          build-args: |
+            USERNAME_GITHUB=${{ secrets.USERNAME_GITHUB }}
+            TOKEN_GITHUB=${{ secrets.TOKEN_GITHUB }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/app:dashboard-be-dev-${{ github.sha }},${{ secrets.DOCKER_HUB_USERNAME }}/app:dashboard-be-dev-latest
+      - name: Executing remote command using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_SERVER_DEV }}
+          username: ${{ secrets.SSH_USERNAME_DEV }}
+          key: ${{secrets.GENERAL_PRIVATE_KEY}}
+          script: |
+            cd atix-deploy-v2/dev
+            docker compose stop app
+            docker compose rm -f app
+            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/app:dashboard-be-dev-latest
+            docker compose up -d app
