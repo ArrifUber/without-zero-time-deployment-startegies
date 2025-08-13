@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Create Private Key File
-        run: echo "${{ secrets.GENERAL_PRIVATE_KEY }}" > conf/privKey.key
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -38,7 +36,7 @@ jobs:
           key: ${{secrets.GENERAL_PRIVATE_KEY}}
           script: |
             cd atix-deploy-v2/dev
-            docker compose stop app
-            docker compose rm -f app
-            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/app:dashboard-be-dev-latest
-            docker compose up -d app
+            sudo docker compose stop app
+            sudo docker compose rm -f app
+            sudo docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/app:dashboard-be-dev-latest
+            sudo docker compose up -d app
