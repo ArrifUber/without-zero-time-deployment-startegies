@@ -2,7 +2,6 @@ services:
   app:
     image: arifbudianto/app:dashboard-be-dev-latest
     container_name: app
-    ports:
   nginx:
     image: nginx:alpine
     container_name: nginx
