@@ -1,14 +1,17 @@
 # app.py
 from flask import Flask, request, jsonify
-import time
-from datetime import datetime
+
 app = Flask(__name__)
 
 APP_VERSION = "1.0.1"
 
+@app.route("/health")
+def health():
+    return jsonify(status="ok"), 200     
+
 @app.route("/")
 def home():
-    return f"Hello from Zero Downtime App! Version: {APP_VERSION}"
+    return f"Hello from without zero downtime App! Version: {APP_VERSION}"
 
 @app.route("/login", methods=["POST"])
 def login():
