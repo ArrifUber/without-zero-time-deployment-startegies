@@ -2,6 +2,11 @@ services:
   app:
     image: arifbudianto/app:dashboard-be-dev-latest
     container_name: app
+    environment:
+      DB_HOST: db
+      DB_NAME: mydb
+      DB_USER: admin
+      DB_PASSWORD: admin1234
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -11,3 +16,13 @@ services:
       - "8080:80"
     depends_on:
       - app
+  db:
+    image: mysql
+    container_name: mydb
+    environment:
+      MYSQL_ROOT_PASSWORD: admin1234
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin1234
+    ports:
+      - 3306:3306
